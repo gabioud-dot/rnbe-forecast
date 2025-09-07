@@ -3,7 +3,7 @@ name: RNBE Pronóstico (viernes 08:00 ART)
 on:
   schedule:
     - cron: '0 11 * * 5'   # 08:00 ART (UTC-3) => 11:00 UTC
-  workflow_dispatch:
+  workflow_dispatch:        # permite ejecutarlo manualmente
 
 jobs:
   run:
@@ -28,19 +28,20 @@ jobs:
           TZ: America/Argentina/Buenos_Aires
         run: |
           python rnbe_pronostico.py
+          ls -la out/ || true
 
-       # - name: Send email
-  #   env:
-  #     GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-  #     EMAIL_FROM: ${{ vars.EMAIL_FROM }}
-  #     EMAIL_TO: ${{ vars.EMAIL_TO }}
-  #     SUBJECT_PREFIX: ${{ vars.SUBJECT_PREFIX }}
-  #   run: |
-  #     python enviar_mail.py
+      - name: Send email
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          EMAIL_FROM: ${{ vars.EMAIL_FROM }}
+          EMAIL_TO: ${{ vars.EMAIL_TO }}
+          SUBJECT_PREFIX: ${{ vars.SUBJECT_PREFIX }}
+        run: |
+          python enviar_mail.py
 
-
-      - name: Publicar artefactos (salidas)
+      - name: Publicar artefactos
         uses: actions/upload-artifact@v4
         with:
           name: pronosticos
           path: out/
+
