@@ -1,0 +1,45 @@
+name: RNBE Pronóstico (viernes 08:00 ART)
+
+on:
+  schedule:
+    - cron: '0 11 * * 5'   # 08:00 ART (UTC-3) => 11:00 UTC
+  workflow_dispatch:
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install yagmail
+
+      - name: Generate forecast (próximo finde)
+        env:
+          TZ: America/Argentina/Buenos_Aires
+        run: |
+          python rnbe_pronostico.py
+
+      - name: Send email
+        env:
+          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+          EMAIL_FROM: ${{ vars.EMAIL_FROM }}
+          EMAIL_TO: ${{ vars.EMAIL_TO }}
+          SUBJECT_PREFIX: ${{ vars.SUBJECT_PREFIX }}
+        run: |
+          python enviar_mail.py
+
+      - name: Publicar artefactos (salidas)
+        uses: actions/upload-artifact@v4
+        with:
+          name: pronosticos
+          path: out/
