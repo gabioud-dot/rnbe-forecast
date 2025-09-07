@@ -29,14 +29,15 @@ jobs:
         run: |
           python rnbe_pronostico.py
 
-      - name: Send email
-        env:
-          GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-          EMAIL_FROM: ${{ vars.EMAIL_FROM }}
-          EMAIL_TO: ${{ vars.EMAIL_TO }}
-          SUBJECT_PREFIX: ${{ vars.SUBJECT_PREFIX }}
-        run: |
-          python enviar_mail.py
+       # - name: Send email
+  #   env:
+  #     GMAIL_APP_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+  #     EMAIL_FROM: ${{ vars.EMAIL_FROM }}
+  #     EMAIL_TO: ${{ vars.EMAIL_TO }}
+  #     SUBJECT_PREFIX: ${{ vars.SUBJECT_PREFIX }}
+  #   run: |
+  #     python enviar_mail.py
+
 
       - name: Publicar artefactos (salidas)
         uses: actions/upload-artifact@v4
